@@ -2,11 +2,10 @@ import { Button } from '@alfalab/core-components/button/cssm';
 import { Collapse } from '@alfalab/core-components/collapse/cssm';
 import { Divider } from '@alfalab/core-components/divider/cssm';
 import { Gap } from '@alfalab/core-components/gap/cssm';
-import { Grid } from '@alfalab/core-components/grid/cssm';
 import { PureCell } from '@alfalab/core-components/pure-cell/cssm';
 import { Slider } from '@alfalab/core-components/slider/cssm';
+import { Status } from '@alfalab/core-components/status/cssm';
 import { Steps } from '@alfalab/core-components/steps/cssm';
-import { Tag } from '@alfalab/core-components/tag/cssm';
 import { Typography } from '@alfalab/core-components/typography/cssm';
 import { ChevronDownMIcon } from '@alfalab/icons-glyph/ChevronDownMIcon';
 import { ChevronUpMIcon } from '@alfalab/icons-glyph/ChevronUpMIcon';
@@ -14,12 +13,9 @@ import { useEffect, useState } from 'react';
 import fileImg from './assets/file.png';
 import hb from './assets/hb.png';
 import houseImg from './assets/house.png';
-import tabplusImg from './assets/tabplus.png';
 import { LS, LSKeys } from './ls';
 import { appSt } from './style.css';
 import { formatWord } from './utils/words';
-
-import { CheckmarkCircleSIcon } from '@alfalab/icons-glyph/CheckmarkCircleSIcon';
 
 const SLIDER_SUM = {
   default: 500_000,
@@ -44,73 +40,75 @@ const faqs = [
   },
   {
     question: 'Можно ли вывести деньги до конца срока?',
-    answer: ['Можно. Накопленный доход сохраняется.'],
+    answer: ['Можно в любой момент, продав все активы.'],
   },
 ];
 
 const advantages = [
   {
     title: 'Высокая доходность',
-    description: 'Зафиксируйте выгодную ставку на срок от 1 до 10 лет',
+    description: 'При долгом сроке инвестирования и регулярных пополнениях',
     img: houseImg,
   },
   {
-    title: 'Дополнительный доход',
-    description: 'Получайте прибыль от возможного роста стоимости облигации',
+    title: 'Активное управление',
+    description: 'Профессиональная управляющая компания делает всё за вас',
     img: fileImg,
-  },
-  {
-    title: 'Лёгкий старт',
-    description: 'Начать можно с 1000 ₽',
-    img: tabplusImg,
   },
 ];
 
 const LINK = 'alfabank://investments/open_investments_account?type=BS';
 
-const tags = [
-  { key: 'ofz', label: 'ОФЗ' },
-  { key: 'banks', label: 'Банки' },
-  { key: 'companies', label: 'Компании' },
+const fonds = [
+  {
+    name: 'Накопительный',
+    forPpl: 'Для осторожных инвесторов',
+    risk: 'НИЗКИЙ РИСК',
+    color: 'green',
+    income: '9-12%',
+    itemBlue: {
+      text: '99.8% корпоративные облигации',
+      width: '95%',
+    },
+    itemPink: {
+      text: '0,2% ценные бумаги РФ',
+    },
+  },
+  {
+    name: 'Облигации Плюс',
+    forPpl: 'Для сбалансированного дохода',
+    risk: 'СРЕДНИЙ РИСК',
+    color: 'orange',
+    income: '11-32%',
+    itemBlue: {
+      text: '61,7% корпоративные облигации',
+      width: '62%',
+    },
+    itemPink: {
+      text: '38,3% ценные бумаги РФ',
+    },
+  },
+  {
+    name: 'Ликвидные акции',
+    forPpl: 'Для агрессивных инвесторов',
+    risk: 'ВЫСОКИЙ РИСК',
+    color: 'red',
+    income: '9-33%',
+    itemBlue: {
+      text: '84,7% акции',
+      width: '85%',
+    },
+    itemPink: {
+      text: '15,3% ценные бумаги РФ',
+    },
+  },
 ];
-
-const tagsData = {
-  ofz: {
-    title: 'Облигации федерального займа',
-    subtitle: 'Самый надёжный инструмент на рынке',
-    leftTitle: 'Доходность',
-    leftValue: '12-15%',
-    rightTitle: 'Риск',
-    rightValue: 'Минимальный',
-    rows: ['Гарантия государства', 'Высокая ликвидность', 'Для осторожных инвесторов'],
-  },
-
-  banks: {
-    title: 'Облигации крупных банков',
-    subtitle: 'Баланс надёжности и доходности',
-    leftTitle: 'Доходность',
-    leftValue: '15-17%',
-    rightTitle: 'Риск',
-    rightValue: 'Минимальный',
-    rows: ['Крупнейшие банки России', 'Регулярные купоны', 'Оптимальный выбор'],
-  },
-  companies: {
-    title: 'Корпоративные облигации',
-    subtitle: 'Максимальная доходность',
-    leftTitle: 'Доходность',
-    leftValue: '16-18%',
-    rightTitle: 'Риск',
-    rightValue: 'Средний',
-    rows: ['Крупнейшие компании', 'Высокий доход', 'Для опытных инвесторов'],
-  },
-};
 
 export const App = () => {
   const [loading, setLoading] = useState(false);
   const [sliderSum, setSliderSum] = useState(SLIDER_SUM.default);
   const [sliderTerm, setSliderTerm] = useState(12);
   const [collapsedItems, setCollapsedItem] = useState<string[]>([]);
-  const [selectedTag, setSelectedTag] = useState<'ofz' | 'banks' | 'companies'>('ofz');
 
   useEffect(() => {
     if (!LS.getItem(LSKeys.UserId, null)) {
@@ -119,10 +117,9 @@ export const App = () => {
   }, []);
 
   const incomeProfitWithSum = Math.floor(((sliderSum * PERCENT) / 12) * sliderTerm);
-  const tagData = tagsData[selectedTag];
 
   const submit = () => {
-    window.gtag('event', '6624_card_activate', { var: 'var2' });
+    window.gtag('event', '6624_card_activate', { var: 'var3' });
     setLoading(true);
 
     // sendDataToGA({
@@ -146,10 +143,11 @@ export const App = () => {
       <div className={appSt.container}>
         <div className={appSt.box}>
           <Typography.TitleResponsive tag="h1" view="large" font="system" weight="semibold">
-            Облигации
+            Фонды
           </Typography.TitleResponsive>
           <Typography.Text view="primary-small" color="secondary">
-            Это «заём» государству или компании: вы даёте деньги под процент и к сроку получаете купоны и возврат номинала
+            Паевые инвестиционные фонды (ПИФ) — общий фонд инвесторов. Управляющая компания инвестирует деньги, вы получаете
+            пай и доход от роста портфеля
           </Typography.Text>
 
           <img src={hb} alt="hb" width="100%" height={133} style={{ objectFit: 'contain' }} />
@@ -189,29 +187,21 @@ export const App = () => {
             </Typography.Text>
             <Typography.Text view="secondary-medium">До 16% годовых</Typography.Text>
             <Divider />
-            <Typography.Text style={{ height: 32 }} view="secondary-medium">
-              Выплата в конце срока
-            </Typography.Text>
+            <Typography.Text view="secondary-medium">Фиксированная ставка</Typography.Text>
             <Divider />
-            <Typography.Text style={{ height: 48 }} view="secondary-medium">
-              Страхование АСВ
-            </Typography.Text>
+            <Typography.Text view="secondary-medium">Страхование АСВ</Typography.Text>
             <Divider />
             <Typography.Text view="secondary-medium">Потеря % при досрочном снятии</Typography.Text>
           </div>
           <div className={appSt.boxTableCell({ filled: true })}>
             <Typography.Text view="primary-small" weight="bold" style={{ marginBottom: '12px' }}>
-              Квазидепозит
+              Фонды
             </Typography.Text>
-            <Typography.Text view="secondary-medium">До 18% годовых</Typography.Text>
+            <Typography.Text view="secondary-medium">до 33% годовых</Typography.Text>
             <Divider />
-            <Typography.Text style={{ height: 32 }} view="secondary-medium">
-              Выплата каждый месяц, неделю
-            </Typography.Text>
+            <Typography.Text view="secondary-medium">Гибкая доходность</Typography.Text>
             <Divider />
-            <Typography.Text style={{ height: 48 }} view="secondary-medium">
-              Выплаты гарантированы эмитентом
-            </Typography.Text>
+            <Typography.Text view="secondary-medium">Не застраховано</Typography.Text>
             <Divider />
             <Typography.Text view="secondary-medium">Накопленный доход сохраняется</Typography.Text>
           </div>
@@ -232,7 +222,7 @@ export const App = () => {
           </span>
           <span>
             <Typography.Text tag="p" defaultMargins={false} view="component-primary">
-              Покупаете облигации
+              Покупаете паи фонда
             </Typography.Text>
             <Typography.Text view="primary-small" color="secondary">
               Подобрали для вас наиболее интересные
@@ -249,67 +239,59 @@ export const App = () => {
         </Steps>
 
         <Typography.TitleResponsive style={{ marginTop: '12px' }} tag="h3" view="small" font="system" weight="semibold">
-          Типы облигаций
+          Типы фондов для начинающих
         </Typography.TitleResponsive>
 
-        <div className={appSt.tags}>
-          {tags.map(itemTag => (
-            <Tag
-              size="s"
-              view="outlined"
-              shape="rectangular"
-              checked={selectedTag === itemTag.key}
-              onClick={() => setSelectedTag(itemTag.key as typeof selectedTag)}
-              key={itemTag.key}
-            >
-              {itemTag.label}
-            </Tag>
-          ))}
-        </div>
+        {fonds.map((fond, index) => (
+          <div className={appSt.boxInfo} key={index}>
+            <div>
+              <Status view="contrast" color={fond.color as 'red' | 'green' | 'orange'} size={20}>
+                <Typography.Text view="secondary-small" weight="bold">
+                  {fond.risk}
+                </Typography.Text>
+              </Status>
+            </div>
 
-        <div className={appSt.boxCalc}>
-          <div>
-            <Typography.TitleResponsive tag="h5" view="xsmall" font="system" weight="semibold">
-              {tagData.title}
-            </Typography.TitleResponsive>
-            <Typography.Text view="primary-small" color="secondary">
-              {tagData.subtitle}
-            </Typography.Text>
+            <div>
+              <Typography.TitleResponsive tag="h4" view="small" font="system" weight="semibold">
+                {fond.name}
+              </Typography.TitleResponsive>
+              <Typography.Text view="primary-small">{fond.forPpl}</Typography.Text>
+            </div>
+
+            <div>
+              <Typography.Text view="component-secondary" color="secondary" className={appSt.row}>
+                Доходность:
+                <Typography.TitleResponsive tag="h5" view="xsmall" font="system" weight="bold" color="positive">
+                  {fond.income}
+                </Typography.TitleResponsive>
+              </Typography.Text>
+            </div>
+
+            <div className={appSt.btms}>
+              <Typography.Text view="component-secondary" color="secondary">
+                Состав портфеля
+              </Typography.Text>
+
+              <div className={appSt.progressBarContainer}>
+                <div className={appSt.progressBarFill} style={{ width: fond.itemBlue.width }} />
+              </div>
+
+              <div className={appSt.row}>
+                <div className={appSt.dot({ color: 'blue' })} />
+                <Typography.Text view="component-secondary" color="secondary">
+                  {fond.itemBlue.text}
+                </Typography.Text>
+              </div>
+              <div className={appSt.row}>
+                <div className={appSt.dot({ color: 'pink' })} />
+                <Typography.Text view="component-secondary" color="secondary">
+                  {fond.itemPink.text}
+                </Typography.Text>
+              </div>
+            </div>
           </div>
-
-          <Grid.Row gutter={{ mobile: 8, desktop: 16 }}>
-            <Grid.Col width="6">
-              <div className={appSt.gridItemBox}>
-                <Typography.Text view="secondary-medium" color="secondary">
-                  {tagData.leftTitle}
-                </Typography.Text>
-                <Typography.Text view="primary-small" weight="medium">
-                  {tagData.leftValue}
-                </Typography.Text>
-              </div>
-            </Grid.Col>
-            <Grid.Col width="6">
-              <div className={appSt.gridItemBox}>
-                <Typography.Text view="secondary-medium" color="secondary">
-                  {tagData.rightTitle}
-                </Typography.Text>
-                <Typography.Text view="primary-small" weight="medium">
-                  {tagData.rightValue}
-                </Typography.Text>
-              </div>
-            </Grid.Col>
-          </Grid.Row>
-
-          <div>
-            {tagData.rows.map((row, index) => (
-              <div className={appSt.row} key={index}>
-                <CheckmarkCircleSIcon />
-
-                <Typography.Text view="primary-small">{row}</Typography.Text>
-              </div>
-            ))}
-          </div>
-        </div>
+        ))}
 
         <Typography.TitleResponsive style={{ marginTop: '12px' }} tag="h3" view="small" font="system" weight="semibold">
           Расчитайте доход

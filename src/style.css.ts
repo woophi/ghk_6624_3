@@ -89,29 +89,62 @@ const bannerAccount = style({
   marginTop: '6px',
 });
 
-const tags = style({
-  display: 'flex',
-  gap: '8px',
-  alignItems: 'center',
-});
-
-const gridItemBox = style({
-  backgroundColor: '#FFFFFF',
-  borderRadius: '8px',
-  padding: '8px',
+const boxInfo = style({
+  borderRadius: '12px',
+  padding: '16px 20px 20px',
+  backgroundColor: '#F6F6FD',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  textAlign: 'center',
-  height: 64,
-  justifyContent: 'center',
+  gap: '12px',
+});
+
+const progressBarContainer = style({
+  width: '100%',
+  height: '8px',
+  backgroundColor: '#F859C5',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  position: 'relative',
+});
+
+const progressBarFill = style({
+  height: '100%',
+  backgroundColor: '#3193FC',
+  borderRadius: '8px',
+  position: 'absolute',
+  top: 0,
+  left: 0,
+});
+
+const dot = recipe({
+  base: {
+    width: '12px',
+    height: '12px',
+    borderRadius: '50%',
+    flexShrink: 0,
+  },
+  variants: {
+    color: {
+      blue: {
+        backgroundColor: '#3193FC',
+      },
+      pink: {
+        backgroundColor: '#F859C5',
+      },
+    },
+  },
 });
 
 const row = style({
   display: 'flex',
   gap: '8px',
   alignItems: 'center',
-  marginTop: '1rem',
+});
+
+const btms = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '8px',
 });
 
 export const appSt = {
@@ -124,7 +157,10 @@ export const appSt = {
   boxCalc,
   rowSb,
   bannerAccount,
-  tags,
-  gridItemBox,
+  boxInfo,
+  progressBarContainer,
+  progressBarFill,
+  dot,
   row,
+  btms,
 };
