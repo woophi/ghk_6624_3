@@ -57,7 +57,7 @@ const advantages = [
   },
 ];
 
-const LINK = 'alfabank://investments/open_investments_account?type=BS';
+const LINK = 'alfabank://multistep-route?version=2&fromModule=FORM&alias=brokerage-account-open-alias';
 
 const fonds = [
   {
